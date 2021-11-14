@@ -18,12 +18,32 @@ class MatrixHandler
 
   def initialize(params = nil)
     @params = params
-    read_file
+    errors.add(:body, 'Invalid file parameter.') if read_file
   end
 
-  def readble?
+  def handlable?
     @valid = validate_matrix_square
     @valid
+  end
+
+  def matrix_format
+    @matrix.map { |row| row.join(',') }.join("\n")
+  end
+
+  def flatten
+    @matrix.join(',')
+  end
+
+  def invert
+    @matrix.transpose
+  end
+
+  def sum
+    @matrix.flatten.sum
+  end
+
+  def multiply
+    @matrix.flatten.inject(1, :*)
   end
 
   private
@@ -31,7 +51,12 @@ class MatrixHandler
   def validate_matrix_square
     matrix_rows_size = @matrix.length
     matrix_amount_items = @matrix.flatten.size
-    matrix_amount_items == (matrix_rows_size * matrix_rows_size)
+    if matrix_amount_items == (matrix_rows_size * matrix_rows_size)
+      errors.add(:body, 'Invalid matrix.')
+      true
+    else
+      false
+    end
   end
 
   def read_file

@@ -24,24 +24,50 @@ RSpec.describe MatrixHandler, type: :model do
       it 'if uploaded file content doesn\'t be square matrix' do
         params = ActionController::Parameters.new(file: fake_matrix)
         @matrix_handler = MatrixHandler.new(params)
-        expect(@matrix_handler.readble?).to be(false)
+        expect(@matrix_handler.handlable?).to be(false)
       end
     end
   end
-  describe 'Create' do
-    before do
-      let(:csv_file) do
-        path = Rails.root.join('spec', 'fixtures', 'test_matrix.csv')
-        fixture_file_upload(path, 'text/csv')
-      end
+  describe 'Format Methods' do
+    let(:csv_file) do
+      path = Rails.root.join('spec', 'fixtures', 'test_matrix.csv')
+      fixture_file_upload(path, 'text/csv')
+    end
 
-      before(:each) do
-        allow(ActionDispatch::Http::UploadedFile).to receive(:new).and_return(csv_file)
-        @matrix_handler = MatrixHandler.new(csv_file)
+    before do
+      allow(ActionDispatch::Http::UploadedFile).to receive(:new).and_return(csv_file)
+      params = ActionController::Parameters.new(file: csv_file)
+      @matrix_handler = MatrixHandler.new(params)
+    end
+
+    describe 'matrix_format' do
+      it 'should print matrix rows separated by coma.' do
+        expect(@matrix_handler.matrix_format).equal?("1,2,3\n4,5,6\n7,8,9")
       end
     end
-    it 'if uploaded file content doesn\'t be square matrix' do
-      expect(@matrix_handler).to_not be_valid
+
+    describe 'flatten' do
+      it 'should print matrix itens separated by coma.' do
+        expect(@matrix_handler.flatten).equal?('1,2,3,4,5,6,7,8,9')
+      end
+    end
+
+    describe 'invert' do
+      it 'should print matrix invert columns and rows.' do
+        expect(@matrix_handler.invert).equal?('[[1,4,7],[2,5,8],[3,6,9]]')
+      end
+    end
+
+    describe 'sum' do
+      it 'should print matrix sum items.' do
+        expect(@matrix_handler.sum).equal?(45)
+      end
+    end
+
+    describe 'multiply' do
+      it 'should print matrix multiply of items.' do
+        expect(@matrix_handler.multiply).equal? 362_880
+      end
     end
   end
 end
