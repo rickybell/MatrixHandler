@@ -1,19 +1,32 @@
-MatrixHandler
+# MatrixHandler
 
-Author: Rickybell(Henrique Bock Belloube)
+**Author:** Rickybell(Henrique Bock Belloube)
 
-Challenge Objective:
+# Challenge Objective:
 This project is the result of a challenge.
 
-Project Structure:
+# Project Structure:
 Originally it was to be programmed in *Go*, but as the author is not familiar with the *Go* language it was developed in Ruby on Rails.
 
 The only *gem* added besides the original Ruby on Rails project was the Rspec for including the tests.
 
-Project function:
+# Project's goal:
 The project creates a **webservice**, which has only one **echo** endpoint.
+```
+localhost:8080/echo
+```
 
-The function of this endpoint is to receive a file, in csv format that contains a quadratic matrix and it must be processed and return to **matrix** in the following formats:
+The project should run like the Ruby on Rails way:
+```
+bundle exec rails server
+```
+
+And through the command line it can be run like this:
+```
+curl -F 'file=@/path/matrix.csv' "localhost:8080/echo"
+```
+
+As a result, the **matrix** sent must be presented in the following formats:
 
 1. Echo (given)
     - Return the matrix as a string in matrix format.
