@@ -15,6 +15,11 @@ RSpec.describe MatrixHandler, type: :model do
         fixture_file_upload(path, 'text/csv')
       end
 
+      let(:empty_file) do
+        path = Rails.root.join('spec', 'fixtures', 'empty_file.csv')
+        fixture_file_upload(path,'text/csv')
+      end
+
       it 'params don\'t include a uploaded file.' do
         @params = ActionController::Parameters.new
         @matrix_handler = MatrixHandler.new(nil)
@@ -23,6 +28,11 @@ RSpec.describe MatrixHandler, type: :model do
 
       it 'if uploaded file content doesn\'t be square matrix' do
         params = ActionController::Parameters.new(file: fake_matrix)
+        @matrix_handler = MatrixHandler.new(params)
+        expect(@matrix_handler.handlable?).to be(false)
+      end
+      it 'if uploaded file is empty' do
+        params = ActionController::Parameters.new(file: empty_file)
         @matrix_handler = MatrixHandler.new(params)
         expect(@matrix_handler.handlable?).to be(false)
       end

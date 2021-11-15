@@ -4,13 +4,10 @@ class MatrixHandler
   include ActiveRecord::Callbacks
 
   validates :params, presence: true
-  validates :matrix, presence: true
-  validates :file, presence: true
-  validate :validate_matrix_square, on: :read
+  validate :validate_params, on: :hand
+  validate :validate_matrix_square, on: :hand
 
-  # , :read_file
-  validates_presence_of :params, :matrix, :file
-  after_create :read_file
+  # after_create :read_file
 
   attr_accessor :params, :matrix, :file
 
@@ -18,12 +15,15 @@ class MatrixHandler
 
   def initialize(params = nil)
     @params = params
-    errors.add(:body, 'Invalid file parameter.') if read_file
+    errors.add(:body, 'Invalid file parameter.') unless read_file
   end
 
   def handlable?
-    @valid = validate_matrix_square
-    @valid
+    return false unless validate_params
+
+    return false unless validate_matrix_square
+
+    true
   end
 
   def matrix_format
@@ -49,13 +49,26 @@ class MatrixHandler
   private
 
   def validate_matrix_square
+    return false if @matrix.nil?
+
     matrix_rows_size = @matrix.length
     matrix_amount_items = @matrix.flatten.size
-    if matrix_amount_items == (matrix_rows_size * matrix_rows_size)
-      errors.add(:body, 'Invalid matrix.')
-      true
-    else
+    if matrix_amount_items != (matrix_rows_size * matrix_rows_size)
+      errors.add(:body, 'Matrix doesn\' have same number of cols and rows.')
       false
+    else
+      true
+    end
+  end
+
+  def validate_params
+    return if @params.nil? || @params[:file].nil?
+
+    if File.zero?(@params[:file])
+      errors.add(:body, 'Empty file.')
+      false
+    else
+      true
     end
   end
 

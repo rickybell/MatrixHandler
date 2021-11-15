@@ -1,11 +1,9 @@
 # EchosController class
 class EchosController < ApplicationController
   def show
-    
     matrix_handler = MatrixHandler.new(params)
-    
-    unless matrix_handler.handlable?
 
+    if matrix_handler.handlable?
       result = {
         matrix_format: matrix_handler.matrix_format,
         invert: matrix_handler.invert,
@@ -16,7 +14,7 @@ class EchosController < ApplicationController
 
       render json: result, status: :ok
     else
-      render json: matrix_handler.errors, status: 500  
+      render json: matrix_handler.errors, status: 500
     end
   end
 end
